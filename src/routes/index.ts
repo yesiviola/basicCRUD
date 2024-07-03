@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
   createUser,
-  deleteUsers,
+  deleteUser,
+  getUserById,
   getUsers,
 } from "../controllers/usersController";
 import auth from "../middlewares/auth";
@@ -12,6 +13,8 @@ router.post("/users", createUser);
 
 router.get("/users", auth, getUsers);
 
-router.delete("/users", deleteUsers);
+router.get("/users/:id", getUserById);
+
+router.delete("/users", deleteUser);
 
 export default router;
