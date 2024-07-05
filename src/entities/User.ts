@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Vehicle } from "./Vehicle";
 
 @Entity({
   name: "users",
@@ -20,4 +27,8 @@ export class User {
 
   @Column()
   active: boolean;
+
+  @OneToOne(() => Vehicle)
+  @JoinColumn()
+  vehicle: Vehicle;
 }

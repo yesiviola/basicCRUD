@@ -1,6 +1,7 @@
 import { UserModel } from "../config/data-source";
 import UserDto from "../dto/UserDto";
 import { User } from "../entities/User";
+import { Vehicle } from "../entities/Vehicle";
 import IUser from "../interfaces/IUser";
 
 let users: User[] = [
@@ -10,6 +11,7 @@ let users: User[] = [
     email: "yesenia@.com",
     age: 33,
     active: true,
+    vehicle: new Vehicle(),
   },
 ];
 
