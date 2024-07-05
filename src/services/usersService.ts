@@ -7,15 +7,15 @@ import IUser from "../interfaces/IUser";
 let users: User[] = [
   {
     id: 1,
-    name: "Yesesenia",
-    email: "yesenia@.com",
+    name: "",
+    email: "",
     age: 33,
     active: true,
     vehicle: new Vehicle(),
   },
 ];
 
-let id: number = 2;
+let id: number = 1;
 
 export const createUserService = async (userData: UserDto) => {
   const user = await UserModel.create(userData);
@@ -24,7 +24,11 @@ export const createUserService = async (userData: UserDto) => {
 };
 
 export const getUsersService = async (): Promise<User[]> => {
-  const users = await UserModel.find();
+  const users = await UserModel.find({
+    relations: {
+      vehicle: true,
+    },
+  });
   return users;
 };
 
