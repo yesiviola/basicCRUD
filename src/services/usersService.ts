@@ -11,7 +11,7 @@ let users: User[] = [
     email: "",
     age: 33,
     active: true,
-    vehicle: new Vehicle(),
+    vehicles: [new Vehicle()],
   },
 ];
 
@@ -26,7 +26,7 @@ export const createUserService = async (userData: UserDto) => {
 export const getUsersService = async (): Promise<User[]> => {
   const users = await UserModel.find({
     relations: {
-      vehicle: true,
+      vehicles: true,
     },
   });
   return users;

@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -28,7 +29,10 @@ export class User {
   @Column()
   active: boolean;
 
-  @OneToOne(() => Vehicle)
-  @JoinColumn()
-  vehicle: Vehicle;
+  // @OneToOne(() => Vehicle)
+  // @JoinColumn()
+  // vehicle: Vehicle;
+
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.user)
+  vehicles: Vehicle[];
 }
