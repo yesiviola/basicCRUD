@@ -2,7 +2,6 @@ import { UserModel } from "../config/data-source";
 import UserDto from "../dto/UserDto";
 import { User } from "../entities/User";
 import { Vehicle } from "../entities/Vehicle";
-import IUser from "../interfaces/IUser";
 
 let users: User[] = [
   {
@@ -40,7 +39,7 @@ export const getUserByIdService = async (id: number): Promise<User | null> => {
 };
 
 export const deleteUserService = async (id: number): Promise<void> => {
-  users = users.filter((user: IUser) => {
+  users = users.filter((user) => {
     return user.id !== id;
   });
 };
