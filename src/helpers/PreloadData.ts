@@ -47,7 +47,7 @@ const vehicles = [
     color: "red",
     model: "Corolla",
     year: 2020,
-    userId: 1,
+    userId: 2,
   },
   {
     brand: "Toyota",
@@ -61,7 +61,7 @@ const vehicles = [
     color: "red",
     model: "Corolla",
     year: 2022,
-    userId: 3,
+    userId: 2,
   },
   {
     brand: "Toyota",
