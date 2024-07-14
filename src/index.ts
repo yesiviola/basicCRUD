@@ -2,13 +2,15 @@ import server from "./server";
 import { PORT } from "./config/envs";
 import "reflect-metadata";
 import { AppDataSource } from "./config/data-source";
-import { preloadData } from "./helpers/PreloadData";
+import { preloadUserData, preloadVehicleData } from "./helpers/PreloadData";
 
-AppDataSource.initialize().then((res) => {
-  console.log("Connecion a la base de dato con exito");
-  preloadData().then(() => {
-    server.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`);
-    });
+const initializeApp = async () => {
+  await AppDataSource.initialize();
+  await preloadUserData();
+  await preloadVehicleData();
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
-});
+};
+
+initializeApp();

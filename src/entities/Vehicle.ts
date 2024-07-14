@@ -22,4 +22,5 @@ export class Vehicle {
 
   @ManyToOne(() => User, (user) => user.vehicles)
   user: User;
+  newVehicle: Promise<User | null>;
 }
