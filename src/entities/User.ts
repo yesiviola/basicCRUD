@@ -35,4 +35,5 @@ export class User {
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user)
   vehicles: Vehicle[];
+  user: Vehicle;
 }

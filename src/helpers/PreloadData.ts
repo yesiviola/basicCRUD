@@ -1,4 +1,6 @@
-import { AppDataSource, UserModel, VehicleModel } from "../config/data-source";
+import { AppDataSource } from "../config/data-source";
+import VehicleRepository from "../repositories/UserRepository";
+import UserRepository from "../repositories/VehicleRepository";
 
 const preloadUsers = [
   {
@@ -98,14 +100,14 @@ const preloadVehicles = vehicles;
 export const preloadUserData = async () => {
   await AppDataSource.manager.transaction(
     async (transactionalEntityManager) => {
-      const users = await UserModel.find();
+      const users = await UserRepository.find();
       if (users.length)
         return console.log(
           "no se hizo la precarga de datos porque ya hay datos"
         );
 
       for await (const user of preloadUsers) {
-        const newUser = await UserModel.create(user);
+        const newUser = await UserRepository.create(user);
         await transactionalEntityManager.save(newUser);
       }
 
@@ -118,9 +120,9 @@ export const preloadVehicleData = async () => {
   try {
     AppDataSource.manager.transaction(async (transactionalEntityManager) => {
       for await (const vehicle of preloadVehicles) {
-        const newVehicle = await VehicleModel.create(vehicle);
+        const newVehicle = await VehicleRepository.create(vehicle);
         transactionalEntityManager.save(newVehicle);
-        const user = await UserModel.findOneBy({ id: vehicle.userId });
+        const user = await UserRepository.findOneBy({ id: vehicle.userId });
 
         if (user) {
           newVehicle.user = user;
