@@ -3,7 +3,6 @@ import VehicleRepository from "../repositories/VehicleRepository";
 import UserRepository from "../repositories/UserRepository";
 import CreateVehicleDto from "../dto/CreateVehicleDto";
 import { Vehicle } from "../entities/Vehicle";
-import { DeepPartial } from "typeorm";
 
 export const getVehiclesService = async (): Promise<Vehicle[]> => {
   const vehicles = await VehicleRepository.find({
@@ -19,16 +18,14 @@ export const getVehiclesService = async (): Promise<Vehicle[]> => {
 
 export const createVehicleService = async (
   vehicle: CreateVehicleDto
-): Promise<Vehicle> => {
+): Promise<Vehicle | undefined> => {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
 
   try {
     await queryRunner.startTransaction();
 
-    const newVehicle = VehicleRepository.create(
-      vehicle as DeepPartial<Vehicle>
-    );
+    const newVehicle = VehicleRepository.create(vehicle);
     await queryRunner.manager.save(newVehicle);
 
     const user = await UserRepository.findOneBy({ id: vehicle.userId });
@@ -38,16 +35,11 @@ export const createVehicleService = async (
     }
 
     newVehicle.user = user;
-
-    const savedVehicle = await queryRunner.manager.save(newVehicle);
+    await queryRunner.manager.save(newVehicle);
 
     await queryRunner.commitTransaction();
 
-    if (!(savedVehicle instanceof Vehicle)) {
-      throw new Error("El dato guardado no es un vehículo.");
-    }
-
-    return savedVehicle;
+    return newVehicle;
   } catch (error) {
     await queryRunner.rollbackTransaction();
     throw new Error("Error al crear el vehículo");

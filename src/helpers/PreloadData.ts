@@ -1,15 +1,17 @@
 import { AppDataSource } from "../config/data-source";
-import VehicleRepository from "../repositories/UserRepository";
-import UserRepository from "../repositories/VehicleRepository";
+import VehicleRepository from "../repositories/VehicleRepository";
+import UserRepository from "../repositories/UserRepository";
+import { DeepPartial } from "typeorm";
+import { Vehicle } from "../entities/Vehicle";
+import { User } from "../entities/User";
 
-const preloadUsers = [
+const preloadUsers: DeepPartial<User>[] = [
   {
     name: "Maria Vega",
     email: "maria@gmail.com",
     age: 32,
     active: true,
   },
-
   { name: "Juan Perez", email: "juan@gmail.com", age: 32, active: true },
   {
     name: "Pedro Rodriguez",
@@ -43,59 +45,57 @@ const preloadUsers = [
   },
 ];
 
-const vehicles = [
+const vehicles: DeepPartial<Vehicle>[] = [
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2020,
-    userId: 2,
+    user: { id: 2 }, // Asegúrate de que userId sea un objeto de tipo User
   },
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2021,
-    userId: 2,
+    user: { id: 2 },
   },
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2022,
-    userId: 2,
+    user: { id: 2 },
   },
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2023,
-    userId: 4,
+    user: { id: 4 },
   },
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2024,
-    userId: 5,
+    user: { id: 5 },
   },
   {
     brand: "Toyota",
     color: "red",
     model: "Corolla",
     year: 2025,
-    userId: 6,
+    user: { id: 6 },
   },
   {
     brand: "Toyota",
     color: "yellow",
     model: "Corolla",
     year: 2021,
-    userId: 7,
+    user: { id: 7 },
   },
 ];
-
-const preloadVehicles = vehicles;
 
 export const preloadUserData = async () => {
   await AppDataSource.manager.transaction(
@@ -103,36 +103,41 @@ export const preloadUserData = async () => {
       const users = await UserRepository.find();
       if (users.length)
         return console.log(
-          "no se hizo la precarga de datos porque ya hay datos"
+          "No se hizo la precarga de datos porque ya hay datos"
         );
 
       for await (const user of preloadUsers) {
-        const newUser = await UserRepository.create(user);
+        const newUser = UserRepository.create(user as DeepPartial<User>);
         await transactionalEntityManager.save(newUser);
       }
 
-      console.log("Precarga de datos realizada con exito");
+      console.log("Precarga de datos realizada con éxito");
     }
   );
 };
 
 export const preloadVehicleData = async () => {
   try {
-    AppDataSource.manager.transaction(async (transactionalEntityManager) => {
-      for await (const vehicle of preloadVehicles) {
-        const newVehicle = await VehicleRepository.create(vehicle);
-        transactionalEntityManager.save(newVehicle);
-        const user = await UserRepository.findOneBy({ id: vehicle.userId });
+    await AppDataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        for await (const vehicle of vehicles) {
+          const newVehicle = VehicleRepository.create(
+            vehicle as DeepPartial<Vehicle>
+          );
+          await transactionalEntityManager.save(newVehicle);
 
-        if (user) {
-          newVehicle.user = user;
-          transactionalEntityManager.save(newVehicle);
-        } else {
-          throw Error("Usuario inexistente");
+          const user = await UserRepository.findOneBy({ id: vehicle.user?.id });
+
+          if (user) {
+            newVehicle.user = user;
+            await transactionalEntityManager.save(newVehicle);
+          } else {
+            throw Error("Usuario inexistente");
+          }
         }
+        console.log("Precarga de datos de vehículos realizada con éxito");
       }
-      console.log("Precarga de dato de vehiculos realizada con exito");
-    });
+    );
   } catch (error) {
     console.error(error);
   }

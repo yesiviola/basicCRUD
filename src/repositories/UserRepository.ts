@@ -1,6 +1,12 @@
 import { AppDataSource } from "../config/data-source";
-import { Vehicle } from "../entities/Vehicle";
+import { User } from "../entities/User";
 
-const VehicleRepository = AppDataSource.getRepository(Vehicle);
+const UserRepository = AppDataSource.getRepository(User).extend({
+  async findById(id: number) {
+    const user = this.findOneBy({ id });
 
-export default VehicleRepository;
+    return user;
+  },
+});
+
+export default UserRepository;

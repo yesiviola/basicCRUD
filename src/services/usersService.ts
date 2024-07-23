@@ -1,31 +1,20 @@
 import { AppDataSource } from "../config/data-source";
-import UserRepository from "../repositories/VehicleRepository";
+import UserRepository from "../repositories/UserRepository";
 import UserDto from "../dto/UserDto";
 import { User } from "../entities/User";
-import { Vehicle } from "../entities/Vehicle";
+import { DeepPartial } from "typeorm";
 
-let users: User[] = [
-  {
-    id: 1,
-    name: "",
-    email: "",
-    age: 33,
-    active: true,
-    vehicles: [new Vehicle()],
-    user: new Vehicle(),
-  },
-];
-
-let id: number = 1;
-
-export const createUserService = async (userData: UserDto) => {
-  const user = await UserRepository.create(userData);
-  const result = await UserRepository.save(user);
-  return user;
+// Función para crear un usuario
+export const createUserService = async (userData: UserDto): Promise<User> => {
+  const userRepository = AppDataSource.getRepository(User);
+  const user = userRepository.create(userData as DeepPartial<User>);
+  return await userRepository.save(user);
 };
 
+// Función para obtener todos los usuarios
 export const getUsersService = async (): Promise<User[]> => {
-  const users = await UserRepository.find({
+  const userRepository = AppDataSource.getRepository(User);
+  const users = await userRepository.find({
     relations: {
       vehicles: true,
     },
@@ -33,15 +22,15 @@ export const getUsersService = async (): Promise<User[]> => {
   return users;
 };
 
+// Función para obtener un usuario por ID
 export const getUserByIdService = async (id: number): Promise<User | null> => {
-  const user = await UserRepository.findOneBy({
-    id,
-  });
+  const userRepository = AppDataSource.getRepository(User);
+  const user = await userRepository.findOneBy({ id });
   return user;
 };
 
+// Función para eliminar un usuario
 export const deleteUserService = async (id: number): Promise<void> => {
-  users = users.filter((user) => {
-    return user.id !== id;
-  });
+  const userRepository = AppDataSource.getRepository(User);
+  await userRepository.delete({ id });
 };

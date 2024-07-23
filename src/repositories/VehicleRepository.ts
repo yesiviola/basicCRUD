@@ -1,6 +1,6 @@
 import { AppDataSource } from "../config/data-source";
-import { User } from "../entities/User";
+import { Vehicle } from "../entities/Vehicle";
 
-const UserRepository = AppDataSource.getRepository(User);
+const VehicleRepository = AppDataSource.getRepository(Vehicle);
 
-export default UserRepository;
+export default VehicleRepository;
